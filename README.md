@@ -1,6 +1,8 @@
 # 🛒 NovaCart - E-Commerce Store (TiendaAPI)
 
-A lightweight e-commerce project built with **.NET 8**, **Entity Framework Core** and **SQLite**, with a web storefront in plain **HTML, CSS and JavaScript**. The API serves both the REST endpoints and the store page.
+A lightweight e-commerce project built with **.NET 10**, **Entity Framework Core** and **SQLite**, with a web storefront in plain **HTML, CSS and JavaScript**. The API serves both the REST endpoints and the store page.
+
+> **Demo store:** orders are not charged or shipped. Do not enter real personal data.
 
 ---
 
@@ -19,8 +21,9 @@ A lightweight e-commerce project built with **.NET 8**, **Entity Framework Core*
 
 ## 🛠️ Tech Stack
 
-* **Backend:** C#, .NET 8 Web API, Entity Framework Core, SQLite
+* **Backend:** C#, .NET 10 Web API, Entity Framework Core, SQLite
 * **Frontend:** HTML, CSS, JavaScript (no frameworks)
+* **Deployment:** Docker, Render
 * **Tools:** Visual Studio Code, Swagger UI, REST Client, GitHub Codespaces
 
 ---
@@ -71,26 +74,29 @@ Example order request:
 ## 📂 Project Structure
 
 ```plaintext
-TiendaAPI/
-├── Controllers/
-│   ├── ProductosController.cs   # Catalog endpoints
-│   └── OrdenesController.cs     # Order creation and lookup
-├── Data/
-│   └── AppDbContext.cs          # EF Core context & seed data
-├── Dtos/
-│   └── CrearOrdenDto.cs         # Accepted input when creating an order
-├── Migrations/                  # EF Core schema migrations
-├── Models/
-│   ├── Producto.cs
-│   ├── Orden.cs
-│   └── DetalleOrden.cs
-├── wwwroot/                     # Storefront (served by the API)
-│   ├── index.html
-│   ├── css/styles.css
-│   └── js/app.js
-├── Program.cs                   # Services, migrations, static files and routing
-├── TiendaAPI.http               # Integration test requests (REST Client)
-└── tienda.db                    # SQLite database (created on startup, not versioned)
+.
+├── Dockerfile                   # Container build used for deployment
+├── .devcontainer/               # GitHub Codespaces configuration
+└── TiendaAPI/
+    ├── Controllers/
+    │   ├── ProductosController.cs   # Catalog endpoints
+    │   └── OrdenesController.cs     # Order creation and lookup
+    ├── Data/
+    │   └── AppDbContext.cs          # EF Core context & seed data
+    ├── Dtos/
+    │   └── CrearOrdenDto.cs         # Accepted input when creating an order
+    ├── Migrations/                  # EF Core schema migrations
+    ├── Models/
+    │   ├── Producto.cs
+    │   ├── Orden.cs
+    │   └── DetalleOrden.cs
+    ├── wwwroot/                     # Storefront (served by the API)
+    │   ├── index.html
+    │   ├── css/styles.css
+    │   └── js/app.js
+    ├── Program.cs                   # Services, migrations, static files and routing
+    ├── TiendaAPI.http               # Integration test requests (REST Client)
+    └── tienda.db                    # SQLite database (created on startup, not versioned)
 ```
 
 ---
@@ -106,4 +112,16 @@ dotnet run --launch-profile http
 * Swagger UI: `http://localhost:5232/swagger`
 * Integration tests: open `TiendaAPI.http` and click **Send Request** above each request, in order (requires the REST Client extension). Each request states the expected status code.
 
-On GitHub Codespaces, the `.devcontainer` configuration installs .NET 8 and the REST Client extension and forwards port 5232.
+On GitHub Codespaces, the `.devcontainer` configuration installs .NET 10 and the REST Client extension and forwards port 5232.
+
+---
+
+## ☁️ Deployment
+
+The repository includes a `Dockerfile`, so it can be deployed to any container host. On [Render](https://render.com):
+
+1. Create a new **Web Service** and connect this GitHub repository.
+2. Choose the **Docker** runtime (Render detects the `Dockerfile` in the root).
+3. Deploy. The app listens on the port Render provides in the `PORT` variable.
+
+The SQLite database lives inside the container, so on hosts without a persistent disk the orders are reset on every restart or deploy. The product catalog is recreated automatically from the seed data.

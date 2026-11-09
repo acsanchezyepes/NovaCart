@@ -3,9 +3,10 @@ using TiendaAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Registrar SQLite
+// 1. Registrar SQLite (la ruta se puede cambiar con ConnectionStrings__Tienda, p. ej. en Docker)
+var connectionString = builder.Configuration.GetConnectionString("Tienda") ?? "Data Source=tienda.db";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=tienda.db"));
+    options.UseSqlite(connectionString));
 
 // 2. Registrar controladores (esto activa ProductosController)
 builder.Services.AddControllers();

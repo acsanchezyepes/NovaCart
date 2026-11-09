@@ -32,6 +32,18 @@ h1, h2, h3 { margin: 0; letter-spacing: -0.02em; }
 .tono-cielo   { background: linear-gradient(135deg, #e8f4ff, #cfe5ff); color: #1f6fd1; }
 .tono-durazno { background: linear-gradient(135deg, #fff2e8, #ffdcc6); color: #d9622b; }
 
+/* ---------- Aviso de demostración ---------- */
+.demo-banner {
+  padding: 0.6rem 1.25rem;
+  background: #fff4d6;
+  border-bottom: 1px solid #f5d98b;
+  color: #6b4e00;
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.hint { margin: 0; color: var(--muted); font-size: 0.8rem; }
+
 /* ---------- Barra superior ---------- */
 .topbar {
   position: sticky;
