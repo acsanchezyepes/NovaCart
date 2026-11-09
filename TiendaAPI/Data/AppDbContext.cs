@@ -8,6 +8,8 @@ namespace TiendaAPI.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Producto> Productos { get; set; }
+        public DbSet<Orden> Ordenes { get; set; }
+        public DbSet<DetalleOrden> DetallesOrden { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,20 @@
+# Carpetas de compilación de .NET
 bin/
 obj/
+
+# Entornos y configuración de VS Code / IDEs
 .vscode/
 .idea/
+
+# Archivos con secretos o variables de entorno
+*.user
+*.env
+appsettings.Development.json
+
+# Base de datos local (la API la crea al arrancar)
+*.db
+*.db-shm
+*.db-wal
+
+# Archivos de sistema de macOS
+.DS_Store

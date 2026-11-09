@@ -1,6 +1,85 @@
 @TiendaAPI_HostAddress = http://localhost:5232
 
-GET {{TiendaAPI_HostAddress}}/weatherforecast/
+### Listar productos: espera 200
+GET {{TiendaAPI_HostAddress}}/api/productos
+Accept: application/json
+
+### Filtrar productos por categoría: espera 200 con 1 producto
+GET {{TiendaAPI_HostAddress}}/api/productos?categoria=monitores
+Accept: application/json
+
+### Producto inexistente: espera 404
+GET {{TiendaAPI_HostAddress}}/api/productos/999
+Accept: application/json
+
+### Orden válida: espera 201 y Total = 159.97
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "cliente@example.com",
+  "detalles": [
+    { "productoId": 1, "cantidad": 2 },
+    { "productoId": 2, "cantidad": 1 }
+  ]
+}
+
+### Precio manipulado: espera 201 y Total = 59.99 (ignora los precios enviados)
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "cliente@example.com",
+  "total": 0.01,
+  "detalles": [
+    { "productoId": 1, "cantidad": 1, "precioUnitario": 0.01 }
+  ]
+}
+
+### Orden sin productos: espera 400
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "cliente@example.com",
+  "detalles": []
+}
+
+### Cantidad cero: espera 400
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "cliente@example.com",
+  "detalles": [
+    { "productoId": 1, "cantidad": 0 }
+  ]
+}
+
+### Cantidad negativa: espera 400
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "cliente@example.com",
+  "detalles": [
+    { "productoId": 1, "cantidad": -3 }
+  ]
+}
+
+### Producto inexistente en la orden: espera 400
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "cliente@example.com",
+  "detalles": [
+    { "productoId": 999, "cantidad": 1 }
+  ]
+}
+
+### Listar órdenes con detalles y productos: espera 200
+GET {{TiendaAPI_HostAddress}}/api/ordenes
 Accept: application/json
 
 ###

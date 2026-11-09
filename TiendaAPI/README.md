@@ -46,12 +46,31 @@ A lightweight, robust RESTful Web API built with **.NET 8** and **Entity Framewo
 ```plaintext
 TiendaAPI/
 ├── Controllers/
-│   └── ProductosController.cs   # API Endpoints for Catalog Management
+│   ├── ProductosController.cs   # API Endpoints for Catalog Management
+│   └── OrdenesController.cs     # API Endpoints for Order Creation & History
 ├── Data/
 │   └── AppDbContext.cs          # EF Core Database Context & Seeding
+├── Migrations/                  # EF Core schema migrations
 ├── Models/
 │   ├── Producto.cs              # Product Entity Model
 │   ├── Orden.cs                 # Order Entity Model
 │   └── DetalleOrden.cs          # Order Detail Entity Model
 ├── Program.cs                   # Application Entry Point & Service Pipeline
-└── tienda.db                    # SQLite Database File
+├── TiendaAPI.http               # Integration test requests (REST Client)
+└── tienda.db                    # SQLite Database File (created on startup, not versioned)
+```
+
+---
+
+## ▶️ Running & Testing
+
+```bash
+cd TiendaAPI
+dotnet run --launch-profile http
+```
+
+* API: `http://localhost:5232`
+* Swagger UI: `http://localhost:5232/swagger`
+* Integration tests: open `TiendaAPI.http` and click **Send Request** above each request (requires the REST Client extension). Each request states the expected status code.
+
+On GitHub Codespaces, the `.devcontainer` configuration installs .NET 8 and the REST Client extension and forwards port 5232.

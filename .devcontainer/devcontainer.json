@@ -1,0 +1,20 @@
+{
+  "name": "TiendaAPI (.NET 8)",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:1-8.0",
+  "forwardPorts": [5232],
+  "portsAttributes": {
+    "5232": {
+      "label": "TiendaAPI",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "dotnet restore TiendaAPI",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "humao.rest-client"
+      ]
+    }
+  }
+}
