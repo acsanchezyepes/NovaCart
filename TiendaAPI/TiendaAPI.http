@@ -78,7 +78,38 @@ Content-Type: application/json
   ]
 }
 
-### Listar órdenes con detalles y productos: espera 200
+### Email inválido: espera 400
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "esto-no-es-un-email",
+  "detalles": [
+    { "productoId": 1, "cantidad": 1 }
+  ]
+}
+
+### Estado manipulado: espera 201 con "estado": "Pendiente" (ignora el enviado)
+POST {{TiendaAPI_HostAddress}}/api/ordenes
+Content-Type: application/json
+
+{
+  "emailCliente": "cliente@example.com",
+  "estado": "Pagado",
+  "detalles": [
+    { "productoId": 2, "cantidad": 1 }
+  ]
+}
+
+### Consultar la orden 1 con detalles y productos: espera 200 y Total = 159.97
+GET {{TiendaAPI_HostAddress}}/api/ordenes/1
+Accept: application/json
+
+### Orden inexistente: espera 404
+GET {{TiendaAPI_HostAddress}}/api/ordenes/999
+Accept: application/json
+
+### Listado de todas las órdenes bloqueado: espera 405
 GET {{TiendaAPI_HostAddress}}/api/ordenes
 Accept: application/json
 

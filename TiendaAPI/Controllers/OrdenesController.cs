@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TiendaAPI.Data;
+using TiendaAPI.Dtos;
 using TiendaAPI.Models;
 
 namespace TiendaAPI.Controllers
@@ -16,51 +17,68 @@ namespace TiendaAPI.Controllers
             _context = context;
         }
 
-        // GET: api/ordenes (Obtener el historial de compras)
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Orden>>> GetOrdenes()
+        // GET: api/ordenes/5 (Consultar una orden concreta)
+        // No hay listado general para no exponer los emails de todos los clientes.
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Orden>> GetOrden(int id)
         {
-            return await _context.Ordenes
+            var orden = await _context.Ordenes
                 .Include(o => o.Detalles)
                 .ThenInclude(d => d.Producto)
-                .ToListAsync();
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (orden == null)
+            {
+                return NotFound(new { mensaje = "Orden no encontrada" });
+            }
+
+            return Ok(orden);
         }
 
         // POST: api/ordenes (Crear una nueva compra/orden)
         [HttpPost]
-        public async Task<ActionResult<Orden>> PostOrden(Orden orden)
+        public async Task<ActionResult<Orden>> PostOrden(CrearOrdenDto dto)
         {
-            if (orden.Detalles == null || !orden.Detalles.Any())
+            if (dto.Detalles == null || dto.Detalles.Count == 0)
             {
                 return BadRequest("La orden debe contener al menos un producto.");
             }
 
-            // Calcular el total automáticamente
-            decimal totalCalculado = 0;
-            foreach (var detalle in orden.Detalles)
+            // El servidor fija precio, total, estado y fecha: el cliente solo elige productos y cantidades.
+            var orden = new Orden
             {
-                if (detalle.Cantidad <= 0)
+                EmailCliente = dto.EmailCliente.Trim(),
+                Estado = "Pendiente",
+                Fecha = DateTime.UtcNow,
+            };
+
+            foreach (var item in dto.Detalles)
+            {
+                if (item.Cantidad <= 0)
                 {
-                    return BadRequest($"La cantidad del producto con ID {detalle.ProductoId} debe ser mayor que 0.");
+                    return BadRequest($"La cantidad del producto con ID {item.ProductoId} debe ser mayor que 0.");
                 }
 
-                var producto = await _context.Productos.FindAsync(detalle.ProductoId);
+                var producto = await _context.Productos.FindAsync(item.ProductoId);
                 if (producto == null)
                 {
-                    return BadRequest($"El producto con ID {detalle.ProductoId} no existe.");
+                    return BadRequest($"El producto con ID {item.ProductoId} no existe.");
                 }
 
-                detalle.PrecioUnitario = producto.Precio;
-                totalCalculado += producto.Precio * detalle.Cantidad;
+                orden.Detalles.Add(new DetalleOrden
+                {
+                    ProductoId = producto.Id,
+                    Producto = producto,
+                    Cantidad = item.Cantidad,
+                    PrecioUnitario = producto.Precio,
+                });
+                orden.Total += producto.Precio * item.Cantidad;
             }
-
-            orden.Total = totalCalculado;
-            orden.Fecha = DateTime.UtcNow;
 
             _context.Ordenes.Add(orden);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetOrdenes), new { id = orden.Id }, orden);
+            return CreatedAtAction(nameof(GetOrden), new { id = orden.Id }, orden);
         }
     }
 }

@@ -14,11 +14,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 3. Crear la base de datos automáticamente si no existe
+// 3. Crear o actualizar la base de datos aplicando las migraciones pendientes
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())
@@ -27,9 +27,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// 4. Servir la página de la tienda (wwwroot/index.html)
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
-// 4. Mapear los controladores
+// 5. Mapear los controladores
 app.MapControllers();
 
 app.Run();
