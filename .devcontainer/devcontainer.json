@@ -1,6 +1,6 @@
 {
-  "name": "TiendaAPI (.NET 8)",
-  "image": "mcr.microsoft.com/devcontainers/dotnet:1-8.0",
+  "name": "TiendaAPI (.NET 10)",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:1-10.0",
   "forwardPorts": [5232],
   "portsAttributes": {
     "5232": {
