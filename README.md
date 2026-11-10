@@ -1,5 +1,7 @@
 # 🛒 NovaCart - E-Commerce Store (TiendaAPI)
 
+[![Pruebas](https://github.com/acsanchezyepes/NovaCart/actions/workflows/pruebas.yml/badge.svg)](https://github.com/acsanchezyepes/NovaCart/actions/workflows/pruebas.yml)
+
 A lightweight e-commerce project built with **.NET 10**, **Entity Framework Core** and **SQLite**, with a web storefront in plain **HTML, CSS and JavaScript**. The API serves both the REST endpoints and the store page.
 
 > **Demo store:** orders are not charged or shipped. Do not enter real personal data.
@@ -25,6 +27,7 @@ A lightweight e-commerce project built with **.NET 10**, **Entity Framework Core
 * **Backend:** C#, .NET 10 Web API, Entity Framework Core, SQLite
 * **Frontend:** HTML, CSS, JavaScript (no frameworks)
 * **Deployment:** Docker-ready (`Dockerfile` included)
+* **Testing & CI:** xUnit, WebApplicationFactory, GitHub Actions
 * **Tools:** Visual Studio Code, Swagger UI, REST Client, GitHub Codespaces
 
 ---
@@ -132,6 +135,8 @@ dotnet run --launch-profile http
 ```bash
 dotnet test TiendaAPI.Tests
 ```
+
+The tests also run automatically on GitHub Actions on every push and pull request to `main` (see the badge at the top).
 
 The xUnit suite starts the API in memory with `WebApplicationFactory` and a temporary SQLite database (it never touches `tienda.db`). It covers the catalog, order validation, server-side pricing, privacy (`405` for listing all orders) and the payment simulator.
 

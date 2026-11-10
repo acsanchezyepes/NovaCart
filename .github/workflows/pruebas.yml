@@ -1,0 +1,29 @@
+# Ejecuta las pruebas automáticas cada vez que se suben cambios a main
+# o se abre un pull request. El resultado aparece como ✅ o ❌ en GitHub.
+name: Pruebas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    name: Compilar y probar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v7
+
+      - name: Instalar .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Ejecutar las pruebas
+        run: dotnet test TiendaAPI.Tests
