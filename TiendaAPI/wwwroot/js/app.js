@@ -23,12 +23,22 @@ const el = {
   confTotal: document.getElementById('conf-total'),
   confEstado: document.getElementById('conf-estado'),
   confClose: document.getElementById('conf-close'),
+  confCheck: document.getElementById('conf-check'),
+  confTitulo: document.getElementById('conf-titulo'),
+  pago: document.getElementById('pago'),
+  pagoOk: document.getElementById('pago-ok'),
+  pagoNo: document.getElementById('pago-no'),
+  pagoMsg: document.getElementById('pago-msg'),
   toast: document.getElementById('toast'),
 };
 
 // Carrito: [{ id, nombre, precio, cantidad }]
 let cart = cargarCarrito();
 let categoriaActiva = '';
+
+// Orden recién creada y los productos que tenía, por si el pago se rechaza.
+let ordenActual = null;
+let carritoComprado = [];
 
 /* ---------- Comunicación con la API ---------- */
 
@@ -132,6 +142,9 @@ const ICONOS = {
   teclado: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9 14h6"/>',
   mouse: '<rect x="6.5" y="3" width="11" height="18" rx="5.5"/><path d="M12 7v3.5"/>',
   monitor: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  audifonos: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+  microfono: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/>',
+  webcam: '<circle cx="12" cy="10" r="6"/><circle cx="12" cy="10" r="2"/><path d="M8 21h8M12 16v5"/>',
   generico: '<path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
 };
 
@@ -141,6 +154,9 @@ function estiloPara(producto) {
   if (texto.includes('teclado')) return { icono: ICONOS.teclado, tono: 'lavanda' };
   if (texto.includes('mouse') || texto.includes('ratón')) return { icono: ICONOS.mouse, tono: 'menta' };
   if (texto.includes('monitor') || texto.includes('pantalla')) return { icono: ICONOS.monitor, tono: 'cielo' };
+  if (texto.includes('audífonos') || texto.includes('auriculares')) return { icono: ICONOS.audifonos, tono: 'durazno' };
+  if (texto.includes('micrófono')) return { icono: ICONOS.microfono, tono: 'durazno' };
+  if (texto.includes('webcam') || texto.includes('cámara')) return { icono: ICONOS.webcam, tono: 'cielo' };
   return { icono: ICONOS.generico, tono: 'durazno' };
 }
 
@@ -361,6 +377,7 @@ el.checkout.addEventListener('submit', async (evento) => {
       }),
     });
 
+    carritoComprado = cart.map((item) => ({ ...item }));
     cart = [];
     actualizarCarrito();
     el.checkout.reset();
@@ -375,19 +392,74 @@ el.checkout.addEventListener('submit', async (evento) => {
 
 function mostrarConfirmacion(orden) {
   // El total mostrado es el que calculó la API, no el del navegador.
+  ordenActual = orden;
   el.confId.textContent = `#${orden.id}`;
   el.confTotal.textContent = money.format(orden.total);
   el.confEstado.textContent = orden.estado;
+  mostrarResultado('pendiente', '…', 'Orden creada: falta el pago');
+  el.pago.hidden = false;
+  el.pagoMsg.textContent = '';
+  el.confClose.hidden = true;
   el.confirmation.hidden = false;
   el.cartContent.hidden = true;
-  el.confClose.focus();
+  el.pagoOk.focus();
+}
+
+function mostrarResultado(tipo, simbolo, titulo) {
+  el.confCheck.className = `check ${tipo}`;
+  el.confCheck.textContent = simbolo;
+  el.confTitulo.className = tipo;
+  el.confTitulo.textContent = titulo;
+}
+
+async function simularPago(aprobado) {
+  if (!ordenActual) return;
+  el.pagoOk.disabled = true;
+  el.pagoNo.disabled = true;
+  el.pagoMsg.className = 'message';
+  el.pagoMsg.textContent = 'Procesando pago simulado…';
+
+  try {
+    const orden = await pedirJson(`${API_URL}/ordenes/${ordenActual.id}/pago`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ aprobado }),
+    });
+    ordenActual = orden;
+    el.confEstado.textContent = orden.estado;
+    el.pago.hidden = true;
+    el.confClose.hidden = false;
+
+    if (orden.estado === 'Pagado') {
+      mostrarResultado('ok', '✓', '¡Pago aprobado!');
+      el.pagoMsg.textContent = 'Gracias por tu compra (simulada).';
+      carritoComprado = [];
+    } else {
+      mostrarResultado('error', '✕', 'Pago rechazado');
+      // Devuelve los productos al carrito para poder intentarlo con una nueva orden.
+      cart = carritoComprado;
+      carritoComprado = [];
+      actualizarCarrito();
+      el.pagoMsg.textContent = 'Tus productos volvieron al carrito para que lo intentes de nuevo.';
+    }
+    el.confClose.focus();
+  } catch (error) {
+    el.pagoMsg.className = 'message error';
+    el.pagoMsg.textContent = error.message;
+  } finally {
+    el.pagoOk.disabled = false;
+    el.pagoNo.disabled = false;
+  }
 }
 
 function ocultarConfirmacion() {
+  ordenActual = null;
   el.confirmation.hidden = true;
   el.cartContent.hidden = false;
 }
 
+el.pagoOk.addEventListener('click', () => simularPago(true));
+el.pagoNo.addEventListener('click', () => simularPago(false));
 el.confClose.addEventListener('click', ocultarConfirmacion);
 
 /* ---------- Inicio ---------- */

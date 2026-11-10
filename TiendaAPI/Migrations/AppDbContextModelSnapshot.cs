@@ -15,7 +15,7 @@ namespace TiendaAPI.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.14");
 
             modelBuilder.Entity("TiendaAPI.Models.DetalleOrden", b =>
                 {
@@ -104,7 +104,7 @@ namespace TiendaAPI.Migrations
                             Id = 1,
                             Categoria = "Periféricos",
                             Descripcion = "Teclado switch blue",
-                            ImagenUrl = "https://via.placeholder.com/150",
+                            ImagenUrl = "/img/productos/teclado.jpg",
                             Nombre = "Teclado Mecánico RGB",
                             Precio = 59.99m
                         },
@@ -113,7 +113,7 @@ namespace TiendaAPI.Migrations
                             Id = 2,
                             Categoria = "Periféricos",
                             Descripcion = "Mouse ergonómico 16000 DPI",
-                            ImagenUrl = "https://via.placeholder.com/150",
+                            ImagenUrl = "/img/productos/mouse.jpg",
                             Nombre = "Mouse Inalámbrico Pro",
                             Precio = 39.99m
                         },
@@ -122,9 +122,63 @@ namespace TiendaAPI.Migrations
                             Id = 3,
                             Categoria = "Monitores",
                             Descripcion = "Pantalla Full HD",
-                            ImagenUrl = "https://via.placeholder.com/150",
+                            ImagenUrl = "/img/productos/monitor-24.jpg",
                             Nombre = "Monitor 24' 144Hz",
                             Precio = 179.99m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Categoria = "Audio",
+                            Descripcion = "Sonido envolvente con micrófono",
+                            ImagenUrl = "/img/productos/audifonos.jpg",
+                            Nombre = "Audífonos Gamer 7.1",
+                            Precio = 69.99m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Categoria = "Audio",
+                            Descripcion = "Ideal para streaming y llamadas",
+                            ImagenUrl = "/img/productos/microfono.jpg",
+                            Nombre = "Micrófono USB Condensador",
+                            Precio = 54.99m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Categoria = "Accesorios",
+                            Descripcion = "Video nítido para tus reuniones",
+                            ImagenUrl = "/img/productos/webcam.jpg",
+                            Nombre = "Webcam Full HD 1080p",
+                            Precio = 44.99m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Categoria = "Accesorios",
+                            Descripcion = "Superficie amplia y antideslizante",
+                            ImagenUrl = "/img/productos/alfombrilla.jpg",
+                            Nombre = "Alfombrilla XL",
+                            Precio = 19.99m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Categoria = "Accesorios",
+                            Descripcion = "Ajustable y plegable",
+                            ImagenUrl = "/img/productos/soporte.jpg",
+                            Nombre = "Soporte para Laptop",
+                            Precio = 29.99m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Categoria = "Monitores",
+                            Descripcion = "Resolución Ultra HD",
+                            ImagenUrl = "/img/productos/monitor-27.jpg",
+                            Nombre = "Monitor 27\" 4K",
+                            Precio = 329.99m
                         });
                 });
 
