@@ -38,3 +38,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Permite que el proyecto de pruebas (TiendaAPI.Tests) encienda la API en memoria.
+public partial class Program { }

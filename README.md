@@ -63,6 +63,7 @@ Example order request:
   - Server-side totals, product and quantity validation, input DTO, email validation.
 - [x] **Phase 4: Integration Testing**
   - Request suite in `TiendaAPI.http` covering `200`, `201`, `400`, `404`, `405` and `409` responses.
+  - Automated xUnit integration tests in `TiendaAPI.Tests`.
 - [x] **Phases 5 & 6: Web Storefront & API Connection**
   - Catalog, cart and checkout in `wwwroot/`, connected to the API with `fetch`.
 - [x] **Expanded catalog & payment simulator**
@@ -86,6 +87,7 @@ Product photos come from [Wikimedia Commons](https://commons.wikimedia.org) unde
 .
 ├── Dockerfile                   # Container build used for deployment
 ├── .devcontainer/               # GitHub Codespaces configuration
+├── TiendaAPI.Tests/             # Automated tests (xUnit + WebApplicationFactory)
 └── TiendaAPI/
     ├── Controllers/
     │   ├── ProductosController.cs   # Catalog endpoints
@@ -123,7 +125,15 @@ dotnet run --launch-profile http
 
 * Store: `http://localhost:5232`
 * Swagger UI: `http://localhost:5232/swagger`
-* Integration tests: open `TiendaAPI.http` and click **Send Request** above each request, in order (requires the REST Client extension). Each request states the expected status code.
+* Manual requests: open `TiendaAPI.http` and click **Send Request** above each request, in order (requires the REST Client extension). Each request states the expected status code.
+
+### Automated tests
+
+```bash
+dotnet test TiendaAPI.Tests
+```
+
+The xUnit suite starts the API in memory with `WebApplicationFactory` and a temporary SQLite database (it never touches `tienda.db`). It covers the catalog, order validation, server-side pricing, privacy (`405` for listing all orders) and the payment simulator.
 
 On GitHub Codespaces, the `.devcontainer` configuration installs .NET 10 and the REST Client extension and forwards port 5232.
 

@@ -1,2 +1,9 @@
 # Archivos de sistema de macOS
 .DS_Store
+
+# Carpetas de compilación de .NET (API y pruebas)
+bin/
+obj/
+
+# Resultados de pruebas
+TestResults/
