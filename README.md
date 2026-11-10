@@ -24,7 +24,7 @@ A lightweight e-commerce project built with **.NET 10**, **Entity Framework Core
 
 * **Backend:** C#, .NET 10 Web API, Entity Framework Core, SQLite
 * **Frontend:** HTML, CSS, JavaScript (no frameworks)
-* **Deployment:** Docker, Render
+* **Deployment:** Docker-ready (`Dockerfile` included)
 * **Tools:** Visual Studio Code, Swagger UI, REST Client, GitHub Codespaces
 
 ---
