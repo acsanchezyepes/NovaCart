@@ -53,13 +53,21 @@
         <h2 id="cart-title">Tu carrito</h2>
 
         <div id="confirmation" class="confirmation" hidden>
-          <div class="check" aria-hidden="true">✓</div>
-          <h3>¡Compra registrada!</h3>
+          <div id="conf-check" class="check" aria-hidden="true">✓</div>
+          <h3 id="conf-titulo">Orden creada</h3>
           <dl>
             <dt>Orden</dt><dd id="conf-id"></dd>
-            <dt>Total cobrado</dt><dd id="conf-total"></dd>
+            <dt>Total</dt><dd id="conf-total"></dd>
             <dt>Estado</dt><dd id="conf-estado"></dd>
           </dl>
+
+          <div id="pago" class="pago">
+            <p class="hint">Simulación de pago: no se usa ninguna tarjeta.</p>
+            <button id="pago-ok" type="button" class="btn primary">Simular pago aprobado</button>
+            <button id="pago-no" type="button" class="btn">Simular pago rechazado</button>
+          </div>
+          <p id="pago-msg" class="message" role="status"></p>
+
           <button id="conf-close" type="button" class="btn">Seguir comprando</button>
         </div>
 
@@ -82,6 +90,10 @@
       </aside>
     </div>
   </main>
+
+  <footer class="footer">
+    NovaCart · Tienda de demostración · <a href="creditos.html">Créditos de las fotos</a>
+  </footer>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 

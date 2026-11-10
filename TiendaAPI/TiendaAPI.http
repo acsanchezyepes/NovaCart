@@ -1,10 +1,10 @@
 @TiendaAPI_HostAddress = http://localhost:5232
 
-### Listar productos: espera 200
+### Listar productos: espera 200 con 9 productos
 GET {{TiendaAPI_HostAddress}}/api/productos
 Accept: application/json
 
-### Filtrar productos por categoría: espera 200 con 1 producto
+### Filtrar productos por categoría: espera 200 con 2 productos
 GET {{TiendaAPI_HostAddress}}/api/productos?categoria=monitores
 Accept: application/json
 
@@ -112,5 +112,43 @@ Accept: application/json
 ### Listado de todas las órdenes bloqueado: espera 405
 GET {{TiendaAPI_HostAddress}}/api/ordenes
 Accept: application/json
+
+### Simular pago aprobado de la orden 1: espera 200 con "estado": "Pagado"
+POST {{TiendaAPI_HostAddress}}/api/ordenes/1/pago
+Content-Type: application/json
+
+{
+  "aprobado": true
+}
+
+### Pagar otra vez la orden 1: espera 409 (ya fue procesada)
+POST {{TiendaAPI_HostAddress}}/api/ordenes/1/pago
+Content-Type: application/json
+
+{
+  "aprobado": true
+}
+
+### Simular pago rechazado de la orden 2: espera 200 con "estado": "Rechazado"
+POST {{TiendaAPI_HostAddress}}/api/ordenes/2/pago
+Content-Type: application/json
+
+{
+  "aprobado": false
+}
+
+### Pago sin indicar el resultado: espera 400
+POST {{TiendaAPI_HostAddress}}/api/ordenes/3/pago
+Content-Type: application/json
+
+{}
+
+### Pago de una orden inexistente: espera 404
+POST {{TiendaAPI_HostAddress}}/api/ordenes/999/pago
+Content-Type: application/json
+
+{
+  "aprobado": true
+}
 
 ###

@@ -48,7 +48,7 @@ namespace TiendaAPI.Controllers
             var orden = new Orden
             {
                 EmailCliente = dto.EmailCliente.Trim(),
-                Estado = "Pendiente",
+                Estado = EstadosOrden.Pendiente,
                 Fecha = DateTime.UtcNow,
             };
 
@@ -79,6 +79,32 @@ namespace TiendaAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetOrden), new { id = orden.Id }, orden);
+        }
+
+        // POST: api/ordenes/5/pago (Simular el pago de una orden pendiente)
+        // Es una simulación: no hay pasarela real ni datos de tarjeta.
+        [HttpPost("{id}/pago")]
+        public async Task<ActionResult<Orden>> SimularPago(int id, SimularPagoDto dto)
+        {
+            var orden = await _context.Ordenes
+                .Include(o => o.Detalles)
+                .ThenInclude(d => d.Producto)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (orden == null)
+            {
+                return NotFound(new { mensaje = "Orden no encontrada" });
+            }
+
+            if (orden.Estado != EstadosOrden.Pendiente)
+            {
+                return Conflict(new { mensaje = $"La orden ya fue procesada (estado: {orden.Estado})." });
+            }
+
+            orden.Estado = dto.Aprobado == true ? EstadosOrden.Pagado : EstadosOrden.Rechazado;
+            await _context.SaveChangesAsync();
+
+            return Ok(orden);
         }
     }
 }

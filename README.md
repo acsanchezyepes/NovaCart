@@ -8,9 +8,10 @@ A lightweight e-commerce project built with **.NET 10**, **Entity Framework Core
 
 ## 🚀 Key Features
 
-* **Product catalog** with category filtering.
+* **Product catalog** of 9 products with real photos and category filtering.
 * **Shopping cart** in the browser: add, remove and change quantities (saved between visits).
 * **Checkout** that sends real orders to the API with `fetch`.
+* **Payment simulator:** approve or reject the payment of a pending order (no card data is requested).
 * **Server-side pricing:** the API ignores prices, totals and status sent by the client and calculates them from the database.
 * **Input validation:** rejects empty orders, unknown products, quantities ≤ 0 and invalid emails.
 * **Privacy:** there is no public endpoint that lists every order and customer email.
@@ -36,6 +37,7 @@ A lightweight e-commerce project built with **.NET 10**, **Entity Framework Core
 | GET | `/api/productos/{id}` | Get one product (`404` if it does not exist) |
 | POST | `/api/ordenes` | Create an order from `emailCliente` and `detalles` (`productoId`, `cantidad`) |
 | GET | `/api/ordenes/{id}` | Get one order with its items (`404` if it does not exist) |
+| POST | `/api/ordenes/{id}/pago` | Simulate the payment of a pending order with `{ "aprobado": true }` or `false` (`409` if it was already processed) |
 
 Example order request:
 
@@ -60,14 +62,21 @@ Example order request:
 - [x] **Phase 3: Business Logic & Security**
   - Server-side totals, product and quantity validation, input DTO, email validation.
 - [x] **Phase 4: Integration Testing**
-  - Request suite in `TiendaAPI.http` covering `201`, `400`, `404` and `405` responses.
+  - Request suite in `TiendaAPI.http` covering `200`, `201`, `400`, `404`, `405` and `409` responses.
 - [x] **Phases 5 & 6: Web Storefront & API Connection**
   - Catalog, cart and checkout in `wwwroot/`, connected to the API with `fetch`.
+- [x] **Expanded catalog & payment simulator**
+  - 9 products with free-licensed photos and order status updates (`Pendiente`, `Pagado`, `Rechazado`).
 
 ### Next steps
 
-- [ ] Payment simulator that updates order status (`Pendiente`, `Pagado`, `Rechazado`).
 - [ ] Customer authentication to view personal order history.
+
+---
+
+## 📷 Photo Credits
+
+Product photos come from [Wikimedia Commons](https://commons.wikimedia.org) under free licenses (CC BY-SA, CC0 and public domain) and are shown resized. Authors and licenses are listed on the store's credits page: `TiendaAPI/wwwroot/creditos.html` (served at `/creditos.html`).
 
 ---
 
@@ -84,14 +93,18 @@ Example order request:
     ├── Data/
     │   └── AppDbContext.cs          # EF Core context & seed data
     ├── Dtos/
-    │   └── CrearOrdenDto.cs         # Accepted input when creating an order
+    │   ├── CrearOrdenDto.cs         # Accepted input when creating an order
+    │   └── SimularPagoDto.cs        # Accepted input when simulating a payment
     ├── Migrations/                  # EF Core schema migrations
     ├── Models/
     │   ├── Producto.cs
     │   ├── Orden.cs
-    │   └── DetalleOrden.cs
+    │   ├── DetalleOrden.cs
+    │   └── EstadosOrden.cs          # Pendiente, Pagado, Rechazado
     ├── wwwroot/                     # Storefront (served by the API)
     │   ├── index.html
+    │   ├── creditos.html            # Photo credits
+    │   ├── img/productos/           # Product photos
     │   ├── css/styles.css
     │   └── js/app.js
     ├── Program.cs                   # Services, migrations, static files and routing
